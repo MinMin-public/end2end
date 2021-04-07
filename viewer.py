@@ -8,8 +8,6 @@ from model import End2End
 from dataset import TrackDataset
 from collections import deque
 import matplotlib.pyplot as plt
-import numpy as np
-import time
 
 # --- drawing functions --- #
 
@@ -45,8 +43,6 @@ def drawscreen(ax, frame):
 
 def drawtext(ax, i):
     ax.cla()
-    right = 0.75
-    top = 0.75
     ax.text(0.5, 0.5, 'End-to-End Learning for Self-driving Car\n\n Frame {}/{}'.format(i,len(dataloader)),
             horizontalalignment='center', verticalalignment='center', fontsize=12, family='monospace', transform=ax.transAxes)
     ax.axis('off')
@@ -56,7 +52,7 @@ def drawtext(ax, i):
 
 device = torch.device('cuda') if torch.cuda.is_available() else torch.device('cpu')
 model = End2End().to(device)
-model.load_state_dict(torch.load("./save/epoch20.pth"))
+model.load_state_dict(torch.load("./save/epoch100.pth"))
 model.eval()
 
 

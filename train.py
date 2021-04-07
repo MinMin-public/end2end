@@ -10,6 +10,7 @@ from torch.utils.data import DataLoader
 from torch.optim.lr_scheduler import MultiStepLR
 from model import End2End
 from dataset import TrackDataset
+import matplotlib.pyplot as plt
 
 batch_size = 32
 epochs = 100
@@ -44,6 +45,8 @@ def get_lr(optimizer):
 
 print("==> Start training ...")
 
+train_loss_l = []
+validation_loss_l = []
 for epoch in range(epochs):
 
     train_loss = 0.0
@@ -65,6 +68,7 @@ for epoch in range(epochs):
         if (i+1) % 100 == 0:
             print("Training Epoch: {} | Batch {}/{} | Loss: {} | LR: {}".format(epoch, i+1, tot_batch, train_loss / (i+1), get_lr(optimizer)))
 
+    train_loss_l.append(train_loss/len(train_dataloader))
     model.eval()
     valid_loss = 0.0
     with torch.no_grad():
@@ -76,7 +80,8 @@ for epoch in range(epochs):
             valid_loss += loss.data.item()
             if (i+1) % 100 == 0:
                 print("Validation Loss: {}".format(valid_loss / (i+1)))
-    
+
+    validation_loss_l.append(valid_loss/len(test_dataloader))
     scheduler.step()
     print("===============================")
 
@@ -84,3 +89,11 @@ for epoch in range(epochs):
     if (epoch+1) % 10 == 0:
         print("==> Save checkpoint ...")
         save_checkpoint(model, epoch+1)
+
+plt.plot(range(epochs), train_loss_l, label="train loss")
+plt.plot(range(epochs), validation_loss_l, label="validation loss")
+plt.legend(loc=1)
+plt.title("Train.py")
+plt.xlabel('epochs')
+plt.ylabel('MSE Loss')
+plt.show()
